@@ -6,55 +6,78 @@ document.getElementById('promo-code-toggle').addEventListener('change', function
         promoCodeField.classList.remove('active');
     }
 });
-document.getElementById('sb-country').addEventListener('click', function () {
-    const dropdown = this.nextElementSibling;
-    dropdown.style.top = this.offsetTop + this.offsetHeight + 'px';
-    dropdown.style.left = this.offsetLeft + 'px';
-    dropdown.classList.toggle('open');
+
+
+
+function adjustSelectWidth(selectElement) {
+    const optionText = selectElement.options[selectElement.selectedIndex].text;
+    const tempSelect = document.createElement('select');
+    const tempOption = document.createElement('option');
+    tempOption.textContent = optionText;
+    tempSelect.style.visibility = 'hidden';
+    tempSelect.style.position = 'absolute';
+    tempSelect.appendChild(tempOption);
+    document.body.appendChild(tempSelect);
+    const width = tempSelect.clientWidth;
+    document.body.removeChild(tempSelect);
+    selectElement.style.width = `${width+15}px`;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const selectElement = document.getElementById('dynamic-width-select');
+    adjustSelectWidth(selectElement);
 });
 
-document.getElementById('sb-age').addEventListener('click', function () {
-    const dropdown = this.nextElementSibling;
-    dropdown.style.top = this.offsetTop + this.offsetHeight + 'px';
-    dropdown.style.left = this.offsetLeft + 'px';
-    dropdown.classList.toggle('open');
-});
 
-document.querySelectorAll('.age-select-list li').forEach(item => {
-    item.addEventListener('click', function () {
-        document.getElementById('sb-age').innerText = this.innerText;
-        document.querySelector('.age-dropdown').classList.remove('open');
-        document.querySelectorAll('.age-select-list li').forEach(li => li.classList.remove('selected'));
-        this.classList.add('selected');
-    });
-});
-
-document.getElementById('residence-sb-country').addEventListener('change', function () {
-    const selectedCountry = this.options[this.selectedIndex].text;
-    document.getElementById('sb-country').innerText = selectedCountry;
-    document.querySelector('.residence-dropdown').classList.remove('open');
-});
-
-document.getElementById('search-country').addEventListener('input', function () {
-    const filter = this.value.toLowerCase();
-    const options = document.getElementById('residence-sb-country').options;
-    for (let i = 0; i < options.length; i++) {
-        const txtValue = options[i].textContent || options[i].innerText;
-        options[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
-    }
-});
-
-document.addEventListener('click', function (e) {
-    const residenceDropdown = document.querySelector('.residence-dropdown');
-    const ageDropdown = document.querySelector('.age-dropdown');
-    if (!residenceDropdown.contains(e.target) && !document.getElementById('sb-country').contains(e.target)) {
-        residenceDropdown.classList.remove('open');
-    }
-    if (!ageDropdown.contains(e.target) && !document.getElementById('sb-age').contains(e.target)) {
-        ageDropdown.classList.remove('open');
-    }
-});
-
+// document.getElementById('sb-country').addEventListener('click', function () {
+//     const dropdown = this.nextElementSibling;
+//     dropdown.style.top = this.offsetTop + this.offsetHeight + 'px';
+//     dropdown.style.left = this.offsetLeft + 'px';
+//     dropdown.classList.toggle('open');
+// });
+//
+// document.getElementById('sb-age').addEventListener('click', function () {
+//     const dropdown = this.nextElementSibling;
+//     dropdown.style.top = this.offsetTop + this.offsetHeight + 'px';
+//     dropdown.style.left = this.offsetLeft + 'px';
+//     dropdown.classList.toggle('open');
+// });
+//
+// document.querySelectorAll('.age-select-list li').forEach(item => {
+//     item.addEventListener('click', function () {
+//         document.getElementById('sb-age').innerText = this.innerText;
+//         document.querySelector('.age-dropdown').classList.remove('open');
+//         document.querySelectorAll('.age-select-list li').forEach(li => li.classList.remove('selected'));
+//         this.classList.add('selected');
+//     });
+// });
+//
+// document.getElementById('residence-sb-country').addEventListener('change', function () {
+//     const selectedCountry = this.options[this.selectedIndex].text;
+//     document.getElementById('sb-country').innerText = selectedCountry;
+//     document.querySelector('.residence-dropdown').classList.remove('open');
+// });
+//
+// document.getElementById('search-country').addEventListener('input', function () {
+//     const filter = this.value.toLowerCase();
+//     const options = document.getElementById('residence-sb-country').options;
+//     for (let i = 0; i < options.length; i++) {
+//         const txtValue = options[i].textContent || options[i].innerText;
+//         options[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+//     }
+// });
+//
+// document.addEventListener('click', function (e) {
+//     const residenceDropdown = document.querySelector('.residence-dropdown');
+//     const ageDropdown = document.querySelector('.age-dropdown');
+//     if (!residenceDropdown.contains(e.target) && !document.getElementById('sb-country').contains(e.target)) {
+//         residenceDropdown.classList.remove('open');
+//     }
+//     if (!ageDropdown.contains(e.target) && !document.getElementById('sb-age').contains(e.target)) {
+//         ageDropdown.classList.remove('open');
+//     }
+// });
+//
 document.querySelectorAll('.input-wrapper').forEach(function(element) {
     element.addEventListener('focusin', function() {
         this.classList.add('focused');
@@ -92,6 +115,9 @@ document.querySelectorAll('.clear-icon').forEach(icon => {
 
 
 
+
+
+// list location and autocomplit
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById('myForm');
     const locationInput = document.getElementById('location');
@@ -228,8 +254,8 @@ document.addEventListener("DOMContentLoaded", function() {
     form.onsubmit = function (event) {
         event.preventDefault();
 
-        document.getElementById('hidden-country').value = document.getElementById('sb-country').innerText;
-        document.getElementById('hidden-age').value = document.getElementById('sb-age').innerText;
+        document.getElementById('hidden-country').value = document.getElementById('dynamic-width-select').value;
+        document.getElementById('hidden-age').value = document.getElementById('age-select').value;
         document.getElementById('pickup-date-input').value = document.getElementById('pickup-date-display').innerText;
         document.getElementById('dropoff-date-input').value = document.getElementById('dropoff-date-display').innerText;
         document.getElementById('pickup-time-input').value = document.getElementById('pickup-hour-display').innerText;
@@ -345,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-// calendar
+// calendar and modalWindow
 document.addEventListener('DOMContentLoaded', function () {
     const calendarBody1 = document.getElementById('calendar-body-1');
     const calendarBody2 = document.getElementById('calendar-body-2');
@@ -355,6 +381,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const monthYear2 = document.getElementById('month-year-2');
     const pickupPicker = document.getElementById('pickup-picker');
     const dropoffPicker = document.getElementById('dropoff-picker');
+    const pickupPickerModal = document.getElementById('pickup-picker-model');
+    const dropoffPickerModal = document.getElementById('dropoff-picker-model');
 
     const calendarContainer = document.querySelector('.calendar-container');
 
@@ -390,6 +418,8 @@ document.addEventListener('DOMContentLoaded', function () {
         appendDays(calendarBody2, secondMonthDays, secondMonthYear.month, secondMonthYear.year);
 
         updateDateDisplays();
+        updateContinueButton()
+
     }
 
     function appendWeekDays(container) {
@@ -433,17 +463,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     cell.addEventListener('click', () => selectDate(date));
                 }
 
-                cell.addEventListener('mouseover', () => {
-                    if (currentPicker === 'dropoff' && selectedPickupDate && date > selectedPickupDate) {
-                        addInRangeClasses(date);
-                        cell.classList.add('hover-highlight');
-                    }
-                });
+                if (window.innerWidth > 768){
+                   cell.addEventListener('mouseover', () => {
+                       if (currentPicker === 'dropoff' && selectedPickupDate && date > selectedPickupDate) {
+                           addInRangeClasses(date);
+                           cell.classList.add('hover-highlight');
+                       }
+                   });
 
-                cell.addEventListener('mouseout', () => {
-                    clearInRangeClasses();
-                    cell.classList.remove('hover-highlight');
-                });
+                   cell.addEventListener('mouseout', () => {
+                       clearInRangeClasses();
+                       cell.classList.remove('hover-highlight');
+                   });
+               }
+
+
             }
 
             if (date.toDateString() === today.toDateString()) {
@@ -501,28 +535,37 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedDropoffDate = null;
             }
             currentPicker = 'dropoff';
-            pickupPicker.classList.remove('focused-clas');
-            dropoffPicker.classList.add('focused-clas');
+            if (window.innerWidth >768){
+                pickupPicker.classList.remove('focused-clas');
+                dropoffPicker.classList.add('focused-clas');
+            } else {
+                pickupPickerModal.classList.remove('focused-clas');
+                dropoffPickerModal.classList.add('focused-clas');
+            }
         } else if (currentPicker === 'dropoff') {
             selectedDropoffDate = date;
             currentPicker = 'pickup';
-            calendarContainer.style.display = 'none'; // Закрити календар після вибору дати дроп-оф
+            calendarContainer.style.display = 'none';
+            pickupPickerModal.classList.add('focused-clas');
+            dropoffPickerModal.classList.remove('focused-clas');
         }
         updateCalendar();
         updateDateDisplays();
+        updateModalCalendar();
+        updateContinueButton();
     }
 
     function updateDateDisplays() {
         const pickupDateDisplay = document.getElementById('pickup-date-display');
         const dropoffDateDisplay = document.getElementById('dropoff-date-display');
-        const pickupDateDisplayModal = document.getElementById('pickup-date-display-modal'); // NEW
-        const dropoffDateDisplayModal = document.getElementById('dropoff-date-display-modal'); // NEW
+        const pickupDateDisplayModal = document.getElementById('pickup-date-display-modal');
+        const dropoffDateDisplayModal = document.getElementById('dropoff-date-display-modal');
 
         pickupDateDisplay.textContent = formatDate(selectedPickupDate);
         dropoffDateDisplay.textContent = formatDate(selectedDropoffDate);
 
-        pickupDateDisplayModal.textContent = `${formatDate(selectedPickupDate)}`; // NEW
-        dropoffDateDisplayModal.textContent = `${formatDate(selectedDropoffDate)}`; // NEW
+        pickupDateDisplayModal.textContent = formatDate(selectedPickupDate);
+        dropoffDateDisplayModal.textContent = formatDate(selectedDropoffDate);
     }
 
     function formatDate(date) {
@@ -534,10 +577,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function showCalendar(event) {
         event.stopPropagation();
 
-        if (window.innerWidth <= 768) { // NEW
-            showModal(); // NEW
-            return; // NEW
-        } // NEW
+        if (window.innerWidth <= 768) {
+            showModal();
+            return;
+        }
 
         calendarContainer.style.display = 'block';
 
@@ -547,9 +590,9 @@ document.addEventListener('DOMContentLoaded', function () {
         calendarContainer.style.top = `${rect.bottom + window.scrollY}px`;
         calendarContainer.style.left = `${rect.left}px`;
 
-        if (event.currentTarget.id === 'pickup-picker') {
+        if (event.currentTarget.id === 'pickup-picker' || event.currentTarget.id === 'pickup-picker-model') {
             currentPicker = 'pickup';
-        } else if (event.currentTarget.id === 'dropoff-picker') {
+        } else if (event.currentTarget.id === 'dropoff-picker' || event.currentTarget.id === 'dropoff-picker-model') {
             currentPicker = 'dropoff';
         }
         updateCalendar();
@@ -600,64 +643,86 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // NEW: Функції для модального вікна
+    //Функції для модального вікна
     function showModal() {
         const modal = document.getElementById('date-modal');
-        modal.classList.remove('hidden');
+        modal.style.display = 'block';
+        pickupPickerModal.classList.add('focused-clas')
 
         updateModalCalendar(); // Виклик функції оновлення календаря
 
-        document.getElementById('close-modal-btn').addEventListener('click', hideModal);
-        document.getElementById('continue-btn').addEventListener('click', hideModal);
     }
 
     function updateModalCalendar() {
         const modalCalendarContainer = document.getElementById('calendar-container-modal');
-        modalCalendarContainer.innerHTML = ''; // Очищення контейнера календаря модального вікна
+        modalCalendarContainer.innerHTML = '';
 
         // Масив для зберігання контейнерів для місяців
         const calendarContainers = [];
 
         // Створення та додавання контейнерів для 10 місяців
-        for (let i = 0; i < 10; i++) {
-            const calendarSection = document.createElement('div'); // NEW
-            calendarSection.classList.add('calendar-section'); // NEW
+        for (let i = 0; i < 12; i++) {
+            const calendarSection = document.createElement('div');
+            calendarSection.classList.add('calendar-section');
 
             const newContainer = document.createElement('div');
             newContainer.classList.add('calendar-body');
 
-            const monthYearElement = document.createElement('div'); // NEW
-            monthYearElement.classList.add('month-year'); // NEW
-            calendarSection.appendChild(monthYearElement); // NEW
+            const monthYearElement = document.createElement('div');
+            monthYearElement.classList.add('month-year');
+            calendarSection.appendChild(monthYearElement);
 
             calendarSection.appendChild(newContainer);
             calendarContainers.push(newContainer);
-            modalCalendarContainer.appendChild(calendarSection); // NEW
+            modalCalendarContainer.appendChild(calendarSection);
         }
 
         // Заповнення календарів даними для кожного місяця
-        for (let i = 0; i < 10; i++) {
-            const monthYear = getAdjustedMonthYear(currentMonth + i, currentYear);
+        let tempMonth = currentMonth;
+        let tempYear = currentYear;
+
+        for (let i = 0; i < 12; i++) {
+            const monthYear = getAdjustedMonthYear(tempMonth, tempYear);
             const monthDays = getDaysInMonth(monthYear.year, monthYear.month);
 
-            const monthYearElement = calendarContainers[i].previousElementSibling; // NEW
+            const monthYearElement = calendarContainers[i].previousElementSibling;
             monthYearElement.textContent = `${months[monthYear.month]} ${monthYear.year}`;
 
-            appendWeekDays(calendarContainers[i]);
             appendDays(calendarContainers[i], monthDays, monthYear.month, monthYear.year);
+
+            // Переходимо до наступного місяця
+            tempMonth++;
+            if (tempMonth > 11) {
+                tempMonth = 0;
+                tempYear++;
+            }
         }
 
-        updateDateDisplays(); // Оновлення відображення дати
+        updateDateDisplays();
     }
 
-    function hideModal() { // NEW
+    function hideModal() {
         const modal = document.getElementById('date-modal');
-        modal.classList.add('hidden');
+        modal.style.display = 'none'
+
+    }
+
+    function updateContinueButton() {
+        const continueButton = document.getElementById('continue-btn');
+        if (selectedDropoffDate) {
+            continueButton.disabled = false;
+            continueButton.style.opacity = 1;
+        } else {
+            continueButton.disabled = true;
+            continueButton.style.opacity = 0.5;
+        }
     }
 
     // Initial setup
     updateCalendar();
 
+    document.getElementById('close-modal-btn').addEventListener('click', hideModal);
+    document.getElementById('continue-btn').addEventListener('click', hideModal);
     pickupPicker.addEventListener('click', showCalendar);
     dropoffPicker.addEventListener('click', showCalendar);
     document.addEventListener('click', hideCalendar);
@@ -788,63 +853,38 @@ document.querySelectorAll('.data-picker-hour select').forEach(function(select) {
 
 
 
-document.addEventListener('DOMContentLoaded', function() {
-    const countrySelect = document.getElementById('residence-sb-country');
-    const ageList = document.querySelectorAll('.age-select-list li');
+// document.addEventListener('DOMContentLoaded', function() {
+//     const countrySelect = document.getElementById('residence-sb-country');
+//     const ageList = document.querySelectorAll('.age-select-list li');
+//
+//     // Невидимі інпути
+//     const hiddenCountryInput = document.getElementById('hidden-country');
+//     const hiddenAgeInput = document.getElementById('hidden-age');
+//
+//     // Оновлення інпуту для країни
+//     countrySelect.addEventListener('change', function() {
+//         const selectedOption = countrySelect.options[countrySelect.selectedIndex];
+//         document.getElementById('sb-country').textContent = selectedOption.textContent;
+//         hiddenCountryInput.value = selectedOption.value;
+//     });
+//
+//     // Оновлення інпуту для віку
+//     ageList.forEach(function(li) {
+//         li.addEventListener('click', function() {
+//             // Знімаємо вибір з усіх елементів
+//             ageList.forEach(function(el) {
+//                 el.classList.remove('selected');
+//             });
+//             // Встановлюємо вибраний клас
+//             li.classList.add('selected');
+//             document.getElementById('sb-age').textContent = li.textContent;
+//             hiddenAgeInput.value = li.dataset.value;
+//         });
+//     });
+//
+//
 
-    // Невидимі інпути
-    const hiddenCountryInput = document.getElementById('hidden-country');
-    const hiddenAgeInput = document.getElementById('hidden-age');
-
-    // Оновлення інпуту для країни
-    countrySelect.addEventListener('change', function() {
-        const selectedOption = countrySelect.options[countrySelect.selectedIndex];
-        document.getElementById('sb-country').textContent = selectedOption.textContent;
-        hiddenCountryInput.value = selectedOption.value;
-    });
-
-    // Оновлення інпуту для віку
-    ageList.forEach(function(li) {
-        li.addEventListener('click', function() {
-            // Знімаємо вибір з усіх елементів
-            ageList.forEach(function(el) {
-                el.classList.remove('selected');
-            });
-            // Встановлюємо вибраний клас
-            li.classList.add('selected');
-            document.getElementById('sb-age').textContent = li.textContent;
-            hiddenAgeInput.value = li.dataset.value;
-        });
-    });
-
-
-
-    const pickupDateDisplay = document.getElementById('pickup-date-display');
-    const pickupTimeDisplay = document.getElementById('pickup-time-select');
-    const pickupDateInput = document.getElementById('pickup-date-input');
-    const pickupTimeInput = document.getElementById('pickup-time-input');
-
-    const dropoffDateDisplay = document.getElementById('dropoff-date-display');
-    const dropoffTimeDisplay = document.getElementById('dropoff-time-select');
-    const dropoffDateInput = document.getElementById('dropoff-date-input');
-    const dropoffTimeInput = document.getElementById('dropoff-time-input');
-
-    // Example function to set the date and time
-    function setDateTime(pickerType, date, time) {
-        if (pickerType === 'pickup') {
-            pickupDateDisplay.textContent = date;
-            pickupTimeDisplay.textContent = time;
-            pickupDateInput.value = date;
-            pickupTimeInput.value = time;
-        } else if (pickerType === 'dropoff') {
-            dropoffDateDisplay.textContent = date;
-            dropoffTimeDisplay.textContent = time;
-            dropoffDateInput.value = date;
-            dropoffTimeInput.value = time;
-        }
-    }
-
-});
+// });
 
 
 
