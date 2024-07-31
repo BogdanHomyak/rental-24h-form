@@ -29,55 +29,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-// document.getElementById('sb-country').addEventListener('click', function () {
-//     const dropdown = this.nextElementSibling;
-//     dropdown.style.top = this.offsetTop + this.offsetHeight + 'px';
-//     dropdown.style.left = this.offsetLeft + 'px';
-//     dropdown.classList.toggle('open');
-// });
-//
-// document.getElementById('sb-age').addEventListener('click', function () {
-//     const dropdown = this.nextElementSibling;
-//     dropdown.style.top = this.offsetTop + this.offsetHeight + 'px';
-//     dropdown.style.left = this.offsetLeft + 'px';
-//     dropdown.classList.toggle('open');
-// });
-//
-// document.querySelectorAll('.age-select-list li').forEach(item => {
-//     item.addEventListener('click', function () {
-//         document.getElementById('sb-age').innerText = this.innerText;
-//         document.querySelector('.age-dropdown').classList.remove('open');
-//         document.querySelectorAll('.age-select-list li').forEach(li => li.classList.remove('selected'));
-//         this.classList.add('selected');
-//     });
-// });
-//
-// document.getElementById('residence-sb-country').addEventListener('change', function () {
-//     const selectedCountry = this.options[this.selectedIndex].text;
-//     document.getElementById('sb-country').innerText = selectedCountry;
-//     document.querySelector('.residence-dropdown').classList.remove('open');
-// });
-//
-// document.getElementById('search-country').addEventListener('input', function () {
-//     const filter = this.value.toLowerCase();
-//     const options = document.getElementById('residence-sb-country').options;
-//     for (let i = 0; i < options.length; i++) {
-//         const txtValue = options[i].textContent || options[i].innerText;
-//         options[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
-//     }
-// });
-//
-// document.addEventListener('click', function (e) {
-//     const residenceDropdown = document.querySelector('.residence-dropdown');
-//     const ageDropdown = document.querySelector('.age-dropdown');
-//     if (!residenceDropdown.contains(e.target) && !document.getElementById('sb-country').contains(e.target)) {
-//         residenceDropdown.classList.remove('open');
-//     }
-//     if (!ageDropdown.contains(e.target) && !document.getElementById('sb-age').contains(e.target)) {
-//         ageDropdown.classList.remove('open');
-//     }
-// });
-//
 document.querySelectorAll('.input-wrapper').forEach(function(element) {
     element.addEventListener('focusin', function() {
         this.classList.add('focused');
@@ -841,50 +792,6 @@ document.querySelectorAll('.data-picker-hour select').forEach(function(select) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-// document.addEventListener('DOMContentLoaded', function() {
-//     const countrySelect = document.getElementById('residence-sb-country');
-//     const ageList = document.querySelectorAll('.age-select-list li');
-//
-//     // Невидимі інпути
-//     const hiddenCountryInput = document.getElementById('hidden-country');
-//     const hiddenAgeInput = document.getElementById('hidden-age');
-//
-//     // Оновлення інпуту для країни
-//     countrySelect.addEventListener('change', function() {
-//         const selectedOption = countrySelect.options[countrySelect.selectedIndex];
-//         document.getElementById('sb-country').textContent = selectedOption.textContent;
-//         hiddenCountryInput.value = selectedOption.value;
-//     });
-//
-//     // Оновлення інпуту для віку
-//     ageList.forEach(function(li) {
-//         li.addEventListener('click', function() {
-//             // Знімаємо вибір з усіх елементів
-//             ageList.forEach(function(el) {
-//                 el.classList.remove('selected');
-//             });
-//             // Встановлюємо вибраний клас
-//             li.classList.add('selected');
-//             document.getElementById('sb-age').textContent = li.textContent;
-//             hiddenAgeInput.value = li.dataset.value;
-//         });
-//     });
-//
-//
-
-// });
 
 
 

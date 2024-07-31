@@ -60,6 +60,7 @@ body {
     text-decoration: underline;
     outline: none;
     white-space: nowrap;
+    background: #ffffff;
 }
 
 .residence-and-age option {

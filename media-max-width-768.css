@@ -147,6 +147,10 @@
         order: 7;
     }
 
+    .hidden {
+        display: none;
+    }
+
     .hidden.expanded {
         display: none;
     }
