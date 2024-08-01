@@ -496,7 +496,7 @@ input:checked + .slider:before {
 .day-cell.today {
     gap: 10px;
     border-radius: 4px;
-    border: 1px solid #4A44F2;
+    border: 1px solid #504e67;
 }
 
 .day-cell:hover {

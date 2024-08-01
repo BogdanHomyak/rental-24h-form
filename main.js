@@ -8,7 +8,6 @@ document.getElementById('promo-code-toggle').addEventListener('change', function
 });
 
 
-
 function adjustSelectWidth(selectElement) {
     const optionText = selectElement.options[selectElement.selectedIndex].text;
     const tempSelect = document.createElement('select');
@@ -20,31 +19,27 @@ function adjustSelectWidth(selectElement) {
     document.body.appendChild(tempSelect);
     const width = tempSelect.clientWidth;
     document.body.removeChild(tempSelect);
-    selectElement.style.width = `${width+15}px`;
+    selectElement.style.width = `${width + 15}px`;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const selectElement = document.getElementById('dynamic-width-select');
     adjustSelectWidth(selectElement);
 });
 
 
-document.querySelectorAll('.input-wrapper').forEach(function(element) {
-    element.addEventListener('focusin', function() {
+document.querySelectorAll('.input-wrapper').forEach(function (element) {
+    element.addEventListener('focusin', function () {
         this.classList.add('focused');
     });
-    element.addEventListener('focusout', function() {
+    element.addEventListener('focusout', function () {
         this.classList.remove('focused');
     });
 });
 
 
-
-
-
-
 document.querySelectorAll('.input-wrapper input').forEach(input => {
-    input.addEventListener('input', function() {
+    input.addEventListener('input', function () {
         // Додаємо або видаляємо клас 'filled' в залежності від значення інпуту
         if (this.value.trim() !== '') {
             this.classList.add('filled');
@@ -56,7 +51,7 @@ document.querySelectorAll('.input-wrapper input').forEach(input => {
 
 // Додаємо подію кліку на всі іконки очищення тексту
 document.querySelectorAll('.clear-icon').forEach(icon => {
-    icon.addEventListener('click', function() {
+    icon.addEventListener('click', function () {
         // Очищаємо значення відповідного інпуту
         const input = this.previousElementSibling;
         input.value = '';
@@ -65,32 +60,71 @@ document.querySelectorAll('.clear-icon').forEach(icon => {
 });
 
 
-
-
-
 // list location and autocomplit
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", async function () {
     const form = document.getElementById('myForm');
     const locationInput = document.getElementById('location');
     const returnLocationInput = document.getElementById('returnLocation');
-    const locationPlace =[
-        'Miami - Airport, MIA, Florida, USA',
-        'Kobe - Airport, UKB, Japan',
-        'Reynosa - Airport, REX, Mexico',
-        'Poznan - Airport - Lawica, POZ, Poland',
-        'Trondheim - Airport, TRD, Norway',
-        'Phoenix - Airport, PHX, Arizona, USA',
-        'Portland - International Airport, PDX, Oregon, USA'
-    ]
+
+    // Завантаження JSON-файлу
+    let locations = [];
+    try {
+        const response = await fetch('./locations.json');
+        const data = await response.json();
+        locations = extractLocations(data);
+    } catch (error) {
+        console.error('Error loading locations:', error);
+    }
+
+    function extractLocations(data) {
+        let locationsArray = [];
+        data.Locations.Country.forEach(country => {
+            if (Array.isArray(country.Location)) {
+                country.Location.forEach(location => {
+                    const locationName = location.$.Name;
+                    const cityName = location.$.CityName;
+                    const countryName = country.$.name;
+                    const lat = parseFloat(location.$.Lat);
+                    const lng = parseFloat(location.$.Lng);
+                    locationsArray.push({
+                        name: locationName,
+                        display: `${locationName}, ${cityName}, ${countryName}`,
+                        isAirport: locationName.toLowerCase().includes('airport'),
+                        lat: lat,
+                        lng: lng
+                    });
+                });
+            } else if (country.Location) {
+                const location = country.Location.$;
+                const locationName = location.Name;
+                const cityName = location.CityName;
+                const countryName = country.$.name;
+                const lat = parseFloat(location.Lat);
+                const lng = parseFloat(location.Lng);
+                locationsArray.push({
+                    name: locationName,
+                    display: `${locationName}, ${cityName}, ${countryName}`,
+                    isAirport: locationName.toLowerCase().includes('airport'),
+                    lat: lat,
+                    lng: lng
+                });
+            }
+        });
+        return locationsArray;
+    }
 
     function createCustomButton(label, iconPosition, iconType) {
         const buttonDiv = document.createElement('div');
         let svgIcon;
 
         if (iconType === 'rent') {
-            svgIcon = `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#000000" fill-rule="evenodd" d="M8 1a.75.75 0 01.691.46l5.25 12.5a.75.75 0 01-1.027.96L8 12.457 3.086 14.92a.75.75 0 01-1.027-.96l5.25-12.5A.75.75 0 018 1zM4.227 12.67l3.437-1.722a.75.75 0 01.672 0l3.437 1.723L8 3.687 4.227 12.67z" clip-rule="evenodd"></path></g></svg>`;
+            svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="19" height="20" viewBox="0 0 19 20" fill="none">
+<path d="M11 6.947L19 12V14L11 11.474V16.834L14 18.5V20L9.5 19L5 20V18.5L8 16.833V11.473L0 14V12L8 6.947V1.5C8 1.10218 8.15804 0.720644 8.43934 0.43934C8.72064 0.158035 9.10218 0 9.5 0C9.89782 0 10.2794 0.158035 10.5607 0.43934C10.842 0.720644 11 1.10218 11 1.5V6.947Z" fill="black"/>
+</svg>`;
         } else {
-            svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M14.1 4C15.7167 4 17.1042 4.525 18.2625 5.575C19.4208 6.625 20 7.93333 20 9.5C20 11.0667 19.4208 12.375 18.2625 13.425C17.1042 14.475 15.7167 15 14.1 15H7.8L10.4 17.6L9 19L4 14L9 9L10.4 10.4L7.8 13H14.1C15.15 13 16.0625 12.6667 16.8375 12C17.6125 11.3333 18 10.5 18 9.5C18 8.5 17.6125 7.66667 16.8375 7C16.0625 6.33333 15.15 6 14.1 6H7V4H14.1Z" fill="black"/></svg>`;
+            svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="20" viewBox="0 0 14 20" fill="none">
+<path d="M7 9.5C6.33696 9.5 5.70107 9.23661 5.23223 8.76777C4.76339 8.29893 4.5 7.66304 4.5 7C4.5 6.33696 4.76339 5.70107 5.23223 5.23223C5.70107 4.76339 6.33696 4.5 7 4.5C7.66304 4.5 8.29893 4.76339 8.76777 5.23223C9.23661 5.70107 9.5 6.33696 9.5 7C9.5 7.3283 9.43534 7.65339 9.3097 7.95671C9.18406 8.26002 8.99991 8.53562 8.76777 8.76777C8.53562 8.99991 8.26002 9.18406 7.95671 9.3097C7.65339 9.43534 7.3283 9.5 7 9.5ZM7 0C5.14348 0 3.36301 0.737498 2.05025 2.05025C0.737498 3.36301 0 5.14348 0 7C0 12.25 7 20 7 20C7 20 14 12.25 14 7C14 5.14348 13.2625 3.36301 11.9497 2.05025C10.637 0.737498 8.85652 0 7 0Z" fill="black"/>
+</svg>`;
         }
 
         buttonDiv.innerHTML = iconPosition === 'left' ? `${svgIcon} ${label}` : `${label} ${svgIcon}`;
@@ -99,10 +133,6 @@ document.addEventListener("DOMContentLoaded", function() {
         buttonDiv.style.alignItems = 'center';
         return buttonDiv;
     }
-
-
-
-
 
     function autocomplete(inp, arr, isPickup) {
         let currentFocus;
@@ -119,9 +149,9 @@ document.addEventListener("DOMContentLoaded", function() {
             this.parentNode.appendChild(a);
 
             if (isPickup) {
-                const rentNearMeDiv = createCustomButton('Rent car near me', 'left', 'rent' );
+                const rentNearMeDiv = createCustomButton('Rent car near me', 'left', 'rent');
                 rentNearMeDiv.addEventListener('click', function (e) {
-                    inp.value = 'Rent car near me';
+                    findNearestLocation(locations, inp);
                     closeAllLists();
                 });
                 a.appendChild(rentNearMeDiv);
@@ -135,11 +165,17 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             for (i = 0; i < arr.length; i++) {
-                if (arr[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
+                if (arr[i].display.substr(0, val.length).toUpperCase() === val.toUpperCase()) {
                     b = document.createElement('DIV');
-                    b.innerHTML = '<strong>' + arr[i].substr(0, val.length) + '</strong>';
-                    b.innerHTML += arr[i].substr(val.length);
-                    b.innerHTML += '<input type="hidden" value="' + arr[i] + '">';
+                    const svgIcon = arr[i].isAirport ?
+                        `<svg xmlns="http://www.w3.org/2000/svg" width="19" height="20" viewBox="0 0 19 20" fill="none">
+<path d="M11 6.947L19 12V14L11 11.474V16.834L14 18.5V20L9.5 19L5 20V18.5L8 16.833V11.473L0 14V12L8 6.947V1.5C8 1.10218 8.15804 0.720644 8.43934 0.43934C8.72064 0.158035 9.10218 0 9.5 0C9.89782 0 10.2794 0.158035 10.5607 0.43934C10.842 0.720644 11 1.10218 11 1.5V6.947Z" fill="black"/>
+</svg>` :
+                        `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="20" viewBox="0 0 14 20" fill="none">
+<path d="M7 9.5C6.33696 9.5 5.70107 9.23661 5.23223 8.76777C4.76339 8.29893 4.5 7.66304 4.5 7C4.5 6.33696 4.76339 5.70107 5.23223 5.23223C5.70107 4.76339 6.33696 4.5 7 4.5C7.66304 4.5 8.29893 4.76339 8.76777 5.23223C9.23661 5.70107 9.5 6.33696 9.5 7C9.5 7.3283 9.43534 7.65339 9.3097 7.95671C9.18406 8.26002 8.99991 8.53562 8.76777 8.76777C8.53562 8.99991 8.26002 9.18406 7.95671 9.3097C7.65339 9.43534 7.3283 9.5 7 9.5ZM7 0C5.14348 0 3.36301 0.737498 2.05025 2.05025C0.737498 3.36301 0 5.14348 0 7C0 12.25 7 20 7 20C7 20 14 12.25 14 7C14 5.14348 13.2625 3.36301 11.9497 2.05025C10.637 0.737498 8.85652 0 7 0Z" fill="black"/>
+</svg>`;
+                    b.innerHTML = `<div style="display: flex; align-items: center;">${svgIcon} <span style="margin-left: 10px;">${arr[i].display}</span></div>`;
+                    b.innerHTML += `<input type="hidden" value="${arr[i].display}">`;
                     b.addEventListener('click', function (e) {
                         inp.value = this.getElementsByTagName('input')[0].value;
                         closeAllLists();
@@ -194,11 +230,54 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    autocomplete(locationInput, locationPlace, true);
-    autocomplete(returnLocationInput, locationPlace, false);
+    function findNearestLocation(locations, input) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                let nearestLocation = null;
+                let minDistance = Infinity;
 
+                locations.forEach(location => {
+                    const distance = calculateDistance(userLat, userLng, location.lat, location.lng);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        nearestLocation = location;
+                    }
+                });
 
+                if (nearestLocation) {
+                    input.value = nearestLocation.display;
+                } else {
+                    alert('No nearby locations found.');
+                }
+            }, function (error) {
+                console.error('Geolocation error:', error);
+                alert('Could not retrieve your location.');
+            });
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    }
 
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // Radius of the Earth in kilometers
+        const dLat = deg2rad(lat2 - lat1);
+        const dLon = deg2rad(lon2 - lon1);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Distance in kilometers
+    }
+
+    function deg2rad(deg) {
+        return deg * (Math.PI / 180);
+    }
+
+    autocomplete(locationInput, locations, true);
+    autocomplete(returnLocationInput, locations, false);
 
 
     // Submit
@@ -215,8 +294,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const inputs = form.querySelectorAll("input[type='text'], input[type='hidden']");
         let formIsValid = true;
         let formData = {};
-
-
 
 
         inputs.forEach(input => {
@@ -320,8 +397,6 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 
 
-
-
 // calendar and modalWindow
 document.addEventListener('DOMContentLoaded', function () {
     const calendarBody1 = document.getElementById('calendar-body-1');
@@ -334,15 +409,31 @@ document.addEventListener('DOMContentLoaded', function () {
     const dropoffPicker = document.getElementById('dropoff-picker');
     const pickupPickerModal = document.getElementById('pickup-picker-model');
     const dropoffPickerModal = document.getElementById('dropoff-picker-model');
-
     const calendarContainer = document.querySelector('.calendar-container');
+    const headerData = document.getElementById('headerData');
+    const pickupHourContainer = document.getElementById('pickup-hour-container');
+    const dropoffHourContainer = document.getElementById('dropoff-hour-container');
+    const pickupHourContainerModal = document.getElementById('pickup-hour-container-modal');
+    const dropoffHourContainerModal = document.getElementById('dropoff-hour-container-modal');
+    const dropoffHourDisplayModal = document.getElementById('dropoff-hour-display-modal');
+    const pickupHourDisplayModal = document.getElementById('pickup-hour-display-modal');
+    const pickupHourDisplay = document.getElementById('pickup-hour-display');
+    const dropoffHourDisplay = document.getElementById('dropoff-hour-display');
+    const weekBody = document.querySelector('.weekBody');
+    const continueButton = document.getElementById('continue-btn');
+
+
+    let currentPickerTime = '';
+
+
+
 
     const today = new Date();
     let currentMonth = today.getMonth();
     let currentYear = today.getFullYear();
 
-    let selectedPickupDate = today;
-    let selectedDropoffDate = today;
+    let selectedPickupDate = new Date(today);
+    let selectedDropoffDate = new Date(today);
 
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const weekDays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
@@ -414,19 +505,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     cell.addEventListener('click', () => selectDate(date));
                 }
 
-                if (window.innerWidth > 768){
-                   cell.addEventListener('mouseover', () => {
-                       if (currentPicker === 'dropoff' && selectedPickupDate && date > selectedPickupDate) {
-                           addInRangeClasses(date);
-                           cell.classList.add('hover-highlight');
-                       }
-                   });
+                if (window.innerWidth > 768) {
+                    cell.addEventListener('mouseover', () => {
+                        if (currentPicker === 'dropoff' && selectedPickupDate && date > selectedPickupDate) {
+                            addInRangeClasses(date);
+                            cell.classList.add('hover-highlight');
+                        }
+                    });
 
-                   cell.addEventListener('mouseout', () => {
-                       clearInRangeClasses();
-                       cell.classList.remove('hover-highlight');
-                   });
-               }
+                    cell.addEventListener('mouseout', () => {
+                        clearInRangeClasses();
+                        cell.classList.remove('hover-highlight');
+                    });
+                }
 
 
             }
@@ -471,11 +562,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getAdjustedMonthYear(month, year) {
         if (month < 0) {
-            return { month: 11, year: year - 1 };
+            return {month: 11, year: year - 1};
         } else if (month > 11) {
-            return { month: 0, year: year + 1 };
+            return {month: 0, year: year + 1};
         } else {
-            return { month: month, year: year };
+            return {month: month, year: year};
         }
     }
 
@@ -486,7 +577,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedDropoffDate = null;
             }
             currentPicker = 'dropoff';
-            if (window.innerWidth >768){
+            if (window.innerWidth > 768) {
                 pickupPicker.classList.remove('focused-clas');
                 dropoffPicker.classList.add('focused-clas');
             } else {
@@ -497,8 +588,13 @@ document.addEventListener('DOMContentLoaded', function () {
             selectedDropoffDate = date;
             currentPicker = 'pickup';
             calendarContainer.style.display = 'none';
-            pickupPickerModal.classList.add('focused-clas');
-            dropoffPickerModal.classList.remove('focused-clas');
+            if (window.innerWidth > 768) {
+                dropoffPicker.classList.remove('focused-clas');
+            }else {
+                dropoffPickerModal.classList.remove('focused-clas');
+                pickupPickerModal.classList.add('focused-clas');
+            }
+
         }
         updateCalendar();
         updateDateDisplays();
@@ -521,7 +617,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function formatDate(date) {
         if (!date) return 'N/A';
-        const options = { month: 'short', day: 'numeric' };
+        const options = {month: 'short', day: 'numeric'};
         return date.toLocaleDateString('en-US', options);
     }
 
@@ -596,22 +692,128 @@ document.addEventListener('DOMContentLoaded', function () {
 
     //Функції для модального вікна
     function showModal() {
+        if (window.innerWidth > 768) return; // Відкриваємо модальне вікно лише на мобільних пристроях
+
         const modal = document.getElementById('date-modal');
         modal.style.display = 'block';
-        pickupPickerModal.classList.add('focused-clas')
+
+        if (currentPicker === 'dropoff') {
+            dropoffPickerModal.classList.add('focused-clas');
+            pickupPickerModal.classList.remove('focused-clas');
+        } else if (currentPicker === 'pickup'){
+            pickupPickerModal.classList.add('focused-clas');
+            dropoffPickerModal.classList.remove('focused-clas');
+        }
+
+
+        document.getElementById('calendar-container-modal').classList.remove('hidden');
+        document.getElementById('time-modal-pickup').classList.add('hidden');
+        document.getElementById('time-modal-dropoff').classList.add('hidden');
+        document.querySelector('.background-btn').classList.remove('hidden');
+        document.querySelector('.modal-header').classList.remove('hidden');
+        weekBody.style.display = 'grid';
+
+
+        document.getElementById('add').classList.add('data-picker')
+        document.querySelectorAll('.remove').forEach(clases => {
+            clases.classList.add('date-model-data')
+        })
+        document.querySelectorAll('.add-rem').forEach(clases => {
+            clases.classList.remove('time-date')
+        })
+
+
+        dropoffHourContainerModal.style.display = 'none';
+        pickupHourContainerModal.style.display = 'none';
+        headerData.querySelector('h3').textContent = 'Trip dates';
+
+
 
         updateModalCalendar(); // Виклик функції оновлення календаря
+    }
 
+    // Функція для показу модального вікна з вибором часу для pickup
+    function showTimeModalPickup() {
+        if (window.innerWidth > 768) return; // Відкриваємо модальне вікно лише на мобільних пристроях
+
+        const modal = document.getElementById('date-modal');
+        modal.style.display = 'block';
+        pickupPickerModal.classList.remove('focused-clas');
+        dropoffPickerModal.classList.remove('focused-clas');
+        document.getElementById('time-modal-pickup').classList.remove('hidden');
+        document.getElementById('time-modal-dropoff').classList.add('hidden');
+        document.getElementById('calendar-container-modal').classList.add('hidden');
+        weekBody.style.display = 'none';
+        dropoffHourContainerModal.style.display = 'flex';
+        pickupHourContainerModal.style.display = 'flex';
+        pickupHourContainerModal.classList.add('focused-clas')
+        dropoffHourContainerModal.classList.remove('focused-clas')
+        headerData.querySelector('h3').textContent = 'Select pick-up time';
+        currentPickerTime = 'pickup';
+
+        modal.scrollTop = 0;
+
+
+        document.getElementById('add').classList.remove('data-picker')
+        document.querySelectorAll('.remove').forEach(clases => {
+            clases.classList.remove('date-model-data')
+        })
+        document.querySelectorAll('.add-rem').forEach(clases => {
+            clases.classList.add('time-date')
+        })
+        document.querySelectorAll('#time-select-container-pickup .time-option').forEach(button => {
+            if (button.textContent === pickupHourDisplay.textContent) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+    }
+
+    // Функція для показу модального вікна з вибором часу для dropoff
+    function showTimeModalDropoff() {
+        if (window.innerWidth > 768) return; // Відкриваємо модальне вікно лише на мобільних пристроях
+
+        const modal = document.getElementById('date-modal');
+        modal.style.display = 'block';
+        pickupPickerModal.classList.remove('focused-clas');
+        document.getElementById('time-modal-dropoff').classList.remove('hidden');
+        document.getElementById('time-modal-pickup').classList.add('hidden');
+        document.getElementById('calendar-container-modal').classList.add('hidden');
+        weekBody.style.display = 'none';
+
+        dropoffHourContainerModal.style.display = 'flex';
+        pickupHourContainerModal.style.display = 'flex';
+        dropoffHourContainerModal.classList.add('focused-clas');
+        pickupHourContainerModal.classList.remove('focused-clas')
+        headerData.querySelector('h3').textContent = 'Select drop-off time';
+        currentPickerTime = 'dropoff';
+
+        modal.scrollTop = 0;
+
+        document.getElementById('add').classList.remove('data-picker')
+        document.querySelectorAll('.remove').forEach(clases => {
+            clases.classList.remove('date-model-data')
+        })
+        document.querySelectorAll('.add-rem').forEach(clases => {
+            clases.classList.add('time-date')
+        })
+
+        document.querySelectorAll('#time-select-container-dropoff .time-option').forEach(button => {
+            if (button.textContent === dropoffHourDisplay.textContent) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
     }
 
     function updateModalCalendar() {
         const modalCalendarContainer = document.getElementById('calendar-container-modal');
         modalCalendarContainer.innerHTML = '';
 
-        // Масив для зберігання контейнерів для місяців
         const calendarContainers = [];
 
-        // Створення та додавання контейнерів для 10 місяців
         for (let i = 0; i < 12; i++) {
             const calendarSection = document.createElement('div');
             calendarSection.classList.add('calendar-section');
@@ -641,7 +843,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             appendDays(calendarContainers[i], monthDays, monthYear.month, monthYear.year);
 
-            // Переходимо до наступного місяця
             tempMonth++;
             if (tempMonth > 11) {
                 tempMonth = 0;
@@ -658,8 +859,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
+    // Обробка вибору часу
+    document.querySelectorAll('.time-option').forEach(option => {
+        option.addEventListener('click', () => {
+            document.querySelectorAll('.time-option').forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+
+            if (currentPickerTime === 'pickup') {
+                pickupHourDisplayModal.textContent = option.textContent;
+                pickupHourDisplay.textContent = option.textContent; // Записуємо час у відповідний елемент
+            } else if (currentPickerTime === 'dropoff') {
+                dropoffHourDisplayModal.textContent = option.textContent;
+                dropoffHourDisplay.textContent = option.textContent; // Записуємо час у відповідний елемент
+            }
+        });
+    });
+
     function updateContinueButton() {
-        const continueButton = document.getElementById('continue-btn');
         if (selectedDropoffDate) {
             continueButton.disabled = false;
             continueButton.style.opacity = 1;
@@ -669,123 +885,189 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+
+    function handleContinue() {
+        if (continueButton.disabled) {
+            return;
+        }
+        if (document.getElementById('calendar-container-modal').classList.contains('hidden') &&
+            document.getElementById('time-modal-pickup').classList.contains('hidden') &&
+            !document.getElementById('time-modal-dropoff').classList.contains('hidden')) {
+            hideModal(); // Закриває модальне вікно, якщо ми знаходимося у dropoff модалі
+        } else if (document.getElementById('calendar-container-modal').classList.contains('hidden') &&
+            !document.getElementById('time-modal-pickup').classList.contains('hidden')) {
+            showTimeModalDropoff();
+        } else {
+            showTimeModalPickup();
+        }
+    }
     // Initial setup
     updateCalendar();
 
-    document.getElementById('close-modal-btn').addEventListener('click', hideModal);
-    document.getElementById('continue-btn').addEventListener('click', hideModal);
+
+
+    pickupPicker.addEventListener('click', () => {
+        currentPicker = 'pickup';
+        if (window.innerWidth <= 768) {
+            showModal();
+        } else {
+            showCalendar();
+        }
+    });
+    dropoffPicker.addEventListener('click', () => {
+        currentPicker = 'dropoff';
+        if (window.innerWidth <= 768) {
+            showModal();
+        } else {
+            showCalendar();
+        }
+    });
     pickupPicker.addEventListener('click', showCalendar);
     dropoffPicker.addEventListener('click', showCalendar);
+    document.getElementById('close-modal-btn').addEventListener('click', hideModal);
+    continueButton.addEventListener('click', handleContinue);
     document.addEventListener('click', hideCalendar);
     prevButton.addEventListener('click', showPreviousMonth);
     nextButton.addEventListener('click', showNextMonth);
-});
+    dropoffPickerModal.addEventListener('click', () => {currentPicker = 'dropoff';showModal();});
+    pickupPickerModal.addEventListener('click', () => {currentPicker = 'pickup';showModal();});
+    pickupHourContainer.addEventListener('click', showTimeModalPickup);
+    dropoffHourContainer.addEventListener('click', showTimeModalDropoff);
+    pickupHourContainerModal.addEventListener('click', showTimeModalPickup);
+    dropoffHourContainerModal.addEventListener('click', showTimeModalDropoff);
 
 
 
 
+    //
+    // const handlePickersPositioning = () => {
+    //     // Отримати координати myForm
+    //     const formRect = form.getBoundingClientRect();
+    //
+    //     // Позиціонувати pickupPicker зліва
+    //     pickupPicker.style.top = `${formRect.top}px`;
+    //     pickupPicker.style.left = `${formRect.left}px`;
+    //     pickupPicker.style.right = 'auto';
+    //     pickupPicker.classList.add('active-picker', 'left-side');
+    //
+    //     // Позиціонувати dropoffPicker справа
+    //     dropoffPicker.style.top = `${formRect.top}px`;
+    //     dropoffPicker.style.right = `${window.innerWidth - formRect.right}px`;
+    //     dropoffPicker.style.left = 'auto';
+    //     dropoffPicker.classList.add('active-picker', 'right-side');
+    // };
+    //
+    // pickupPicker.addEventListener('click', handlePickersPositioning);
+    // dropoffPicker.addEventListener('click', handlePickersPositioning);
 
 
+    function toggleSelectVisibility(containerId, selectId) {
+        if (window.innerWidth <= 768) return; // Відключаємо для мобільної версії
 
+        const container = document.getElementById(containerId);
+        const select = document.getElementById(selectId);
 
+        container.addEventListener('click', function (event) {
+            event.stopPropagation();
+            select.classList.toggle('hidden');
+            select.style.position = 'absolute';
+            select.style.top = container.offsetHeight + 'px';
+            select.style.left = '0';
+            select.style.width = container.offsetWidth + 'px';
+            select.focus();
+        });
 
-document.addEventListener('DOMContentLoaded', () => {
-    const pickupPicker = document.getElementById('pickup-picker');
-    const dropoffPicker = document.getElementById('dropoff-picker');
-    const myForm = document.getElementById('myForm');
+        select.addEventListener('change', function () {
+            document.getElementById(containerId).querySelector('span').innerText = this.options[this.selectedIndex].text;
 
-    const handlePickersPositioning = () => {
-        // Отримати координати myForm
-        const formRect = myForm.getBoundingClientRect();
-
-        // Позиціонувати pickupPicker зліва
-        pickupPicker.style.top = `${formRect.top}px`;
-        pickupPicker.style.left = `${formRect.left}px`;
-        pickupPicker.style.right = 'auto';
-        pickupPicker.classList.add('active-picker', 'left-side');
-
-        // Позиціонувати dropoffPicker справа
-        dropoffPicker.style.top = `${formRect.top}px`;
-        dropoffPicker.style.right = `${window.innerWidth - formRect.right}px`;
-        dropoffPicker.style.left = 'auto';
-        dropoffPicker.classList.add('active-picker', 'right-side');
-    };
-
-    pickupPicker.addEventListener('click', handlePickersPositioning);
-    dropoffPicker.addEventListener('click', handlePickersPositioning);
-});
-
-function toggleSelectVisibility(containerId, selectId) {
-    const container = document.getElementById(containerId);
-    const select = document.getElementById(selectId);
-
-    container.addEventListener('click', function (event) {
-        event.stopPropagation();
-        select.classList.toggle('hidden');
-        select.style.position = 'absolute';
-        select.style.top = container.offsetHeight + 'px';
-        select.style.left = '0';
-        select.style.width = container.offsetWidth + 'px';
-        select.focus();
-    });
-
-    select.addEventListener('change', function () {
-        document.getElementById(containerId).querySelector('span').innerText = this.options[this.selectedIndex].text;;
-
-        // Hide select after a short delay to ensure selection is processed
-        setTimeout(() => {
-            select.classList.add('hidden');
-        }, 100); // Adjust the delay as needed
-    });
-}
+            setTimeout(() => {
+                select.classList.add('hidden');
+            }, 100);
+        });
+    }
 
 // Initialize pick-up time
-toggleSelectVisibility('pickup-hour-container', 'pickup-time-select');
+    toggleSelectVisibility('pickup-hour-container', 'pickup-time-select');
 
 // Initialize drop-off time
-toggleSelectVisibility('dropoff-hour-container', 'dropoff-time-select');
+    toggleSelectVisibility('dropoff-hour-container', 'dropoff-time-select');
 
 // Hide select when clicking outside
-document.addEventListener('click', function (event) {
-    document.querySelectorAll('.time-select').forEach(select => {
-        if (!select.classList.contains('hidden')) {
-            select.classList.add('hidden');
-        }
-    });
-});
 
-
-document.querySelectorAll('.data-picker-day, .data-picker-hour').forEach(function(element) {
-    element.addEventListener('click', function(event) {
-        event.stopPropagation();
-        document.querySelectorAll('.data-picker-day, .data-picker-hour').forEach(function(el) {
-            el.classList.remove('focused-clas');
+    document.querySelectorAll('.data-picker-day, .data-picker-hour').forEach(function (element) {
+        element.addEventListener('click', function (event) {
+            event.stopPropagation();
+            document.querySelectorAll('.data-picker-day, .data-picker-hour').forEach(function (el) {
+                el.classList.remove('focused-clas');
+            });
+            this.classList.add('focused-clas');
+            document.addEventListener('click', hidePicker, true);
         });
-        this.classList.add('focused-clas');
-        document.addEventListener('click', hidePicker, true);
     });
-});
 
-function hidePicker(event) {
-    document.querySelectorAll('.data-picker-day, .data-picker-hour').forEach(function(element) {
-        if (!element.contains(event.target)) {
-            element.classList.remove('focused-clas');
-            const select = element.querySelector('select');
-            if (select) {
-                select.classList.add('hidden');
+    function hidePicker(event) {
+        document.querySelectorAll('.data-picker-day, .data-picker-hour').forEach(function (element) {
+            if (!element.contains(event.target)) {
+                element.classList.remove('focused-clas');
+                const select = element.querySelector('select');
+                if (select) {
+                    select.classList.add('hidden');
+                }
             }
+        });
+        document.removeEventListener('click', hidePicker, true);
+    }
+
+    document.querySelectorAll('.data-picker-hour select').forEach(function (select) {
+        if (window.innerWidth > 768) {
+            select.addEventListener('click', function (event) {
+                // event.stopPropagation();
+            });
+            select.addEventListener('blur', function () {
+                this.classList.add('hidden');
+                this.parentElement.classList.remove('focused-clas');
+            });
         }
     });
-    document.removeEventListener('click', hidePicker, true);
-}
-document.querySelectorAll('.data-picker-hour select').forEach(function(select) {
-    select.addEventListener('click', function(event) {
-        // event.stopPropagation();
-    });
-    select.addEventListener('blur', function() {
-        this.classList.add('hidden');
-        this.parentElement.classList.remove('focused-clas');
-    });
+
+});
+
+
+// Mobile form
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.innerWidth <= 768) {
+        const formContainer = document.querySelector('.search-container');
+        const expandableElements = document.querySelectorAll('.expandable');
+        const removeIcon = document.getElementById('remove-expanded-icon');
+        const returnLocationWrapper = document.getElementById('returnLocationWrapper');
+        const returnLocationButton = document.querySelector('.return-location');
+        const promoCodeField = document.querySelector('.promo-code');
+        const promoCodeToggle = document.getElementById('promo-code-toggle');
+
+        expandableElements.forEach(element => {
+            element.addEventListener('click', function () {
+                if (!formContainer.classList.contains('expanded')) {
+                    formContainer.classList.add('expanded');
+                    document.querySelectorAll('.return-location, .data-picker-container, .residence-and-age, .check-box, .input-wrapper, .submit-btn, .promo-code, #returnLocationWrapper')
+                        .forEach(el => el.classList.add('expanded'));
+                    removeIcon.style.display = 'inline';
+                }
+            });
+        });
+
+        removeIcon.addEventListener('click', function () {
+            formContainer.classList.remove('expanded');
+            document.querySelectorAll('.return-location, .data-picker-container, .residence-and-age, .check-box, .input-wrapper, .submit-btn, .promo-code, #returnLocationWrapper')
+                .forEach(el => el.classList.remove('expanded'));
+            removeIcon.style.display = 'none';
+            returnLocationButton.classList.remove('hidden');
+            returnLocationWrapper.classList.add('hidden');
+            if (promoCodeField.classList.contains('active')) {
+                promoCodeField.classList.remove('active');
+                promoCodeToggle.checked = false;
+            }
+        });
+    }
 });
 
 
