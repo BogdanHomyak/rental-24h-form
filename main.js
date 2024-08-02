@@ -49,6 +49,8 @@ document.querySelectorAll('.input-wrapper input').forEach(input => {
     });
 });
 
+
+
 // Додаємо подію кліку на всі іконки очищення тексту
 document.querySelectorAll('.clear-icon').forEach(icon => {
     icon.addEventListener('click', function () {
@@ -616,8 +618,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function showCalendar(event) {
-        event.stopPropagation();
-
+        // event.stopPropagation();
         if (window.innerWidth <= 768) {
             showModal();
             return;
@@ -631,11 +632,6 @@ document.addEventListener('DOMContentLoaded', function () {
         calendarContainer.style.top = `${rect.bottom + window.scrollY}px`;
         calendarContainer.style.left = `${rect.left}px`;
 
-        if (event.currentTarget.id === 'pickup-picker' || event.currentTarget.id === 'pickup-picker-model') {
-            currentPicker = 'pickup';
-        } else if (event.currentTarget.id === 'dropoff-picker' || event.currentTarget.id === 'dropoff-picker-model') {
-            currentPicker = 'dropoff';
-        }
         updateCalendar();
     }
 
@@ -743,7 +739,7 @@ document.addEventListener('DOMContentLoaded', function () {
         pickupHourContainerModal.classList.add('focused-clas')
         dropoffHourContainerModal.classList.remove('focused-clas')
         headerData.querySelector('h3').textContent = 'Select pick-up time';
-        currentPickerTime = 'pickup';
+        currentPickerTime = 'pickupTime';
 
         modal.scrollTop = 0;
 
@@ -781,7 +777,7 @@ document.addEventListener('DOMContentLoaded', function () {
         dropoffHourContainerModal.classList.add('focused-clas');
         pickupHourContainerModal.classList.remove('focused-clas')
         headerData.querySelector('h3').textContent = 'Select drop-off time';
-        currentPickerTime = 'dropoff';
+        currentPickerTime = 'dropoffTime';
 
         modal.scrollTop = 0;
 
@@ -859,12 +855,12 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.time-option').forEach(opt => opt.classList.remove('active'));
             option.classList.add('active');
 
-            if (currentPickerTime === 'pickup') {
+            if (currentPickerTime === 'pickupTime') {
                 pickupHourDisplayModal.textContent = option.textContent;
-                pickupHourDisplay.textContent = option.textContent; // Записуємо час у відповідний елемент
-            } else if (currentPickerTime === 'dropoff') {
+                pickupHourDisplay.textContent = option.textContent;
+            } else if (currentPickerTime === 'dropoffTime') {
                 dropoffHourDisplayModal.textContent = option.textContent;
-                dropoffHourDisplay.textContent = option.textContent; // Записуємо час у відповідний елемент
+                dropoffHourDisplay.textContent = option.textContent;
             }
         });
     });
@@ -884,15 +880,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (continueButton.disabled) {
             return;
         }
-        if (document.getElementById('calendar-container-modal').classList.contains('hidden') &&
-            document.getElementById('time-modal-pickup').classList.contains('hidden') &&
-            !document.getElementById('time-modal-dropoff').classList.contains('hidden')) {
-            hideModal(); // Закриває модальне вікно, якщо ми знаходимося у dropoff модалі
-        } else if (document.getElementById('calendar-container-modal').classList.contains('hidden') &&
-            !document.getElementById('time-modal-pickup').classList.contains('hidden')) {
+
+        const timeModalPickup = document.getElementById('time-modal-pickup');
+
+        if (!timeModalPickup.classList.contains('hidden')) {
             showTimeModalDropoff();
         } else {
-            showTimeModalPickup();
+            hideModal();
         }
     }
     // Initial setup
@@ -916,15 +910,14 @@ document.addEventListener('DOMContentLoaded', function () {
             showCalendar();
         }
     });
-    pickupPicker.addEventListener('click', showCalendar);
-    dropoffPicker.addEventListener('click', showCalendar);
+
     document.getElementById('close-modal-btn').addEventListener('click', hideModal);
     continueButton.addEventListener('click', handleContinue);
     document.addEventListener('click', hideCalendar);
     prevButton.addEventListener('click', showPreviousMonth);
     nextButton.addEventListener('click', showNextMonth);
-    dropoffPickerModal.addEventListener('click', () => {currentPicker = 'dropoff';showModal();});
     pickupPickerModal.addEventListener('click', () => {currentPicker = 'pickup';showModal();});
+    dropoffPickerModal.addEventListener('click', () => {currentPicker = 'dropoff';showModal();});
     pickupHourContainer.addEventListener('click', showTimeModalPickup);
     dropoffHourContainer.addEventListener('click', showTimeModalDropoff);
     pickupHourContainerModal.addEventListener('click', showTimeModalPickup);
@@ -932,27 +925,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
-    //
-    // const handlePickersPositioning = () => {
-    //     // Отримати координати myForm
-    //     const formRect = form.getBoundingClientRect();
-    //
-    //     // Позиціонувати pickupPicker зліва
-    //     pickupPicker.style.top = `${formRect.top}px`;
-    //     pickupPicker.style.left = `${formRect.left}px`;
-    //     pickupPicker.style.right = 'auto';
-    //     pickupPicker.classList.add('active-picker', 'left-side');
-    //
-    //     // Позиціонувати dropoffPicker справа
-    //     dropoffPicker.style.top = `${formRect.top}px`;
-    //     dropoffPicker.style.right = `${window.innerWidth - formRect.right}px`;
-    //     dropoffPicker.style.left = 'auto';
-    //     dropoffPicker.classList.add('active-picker', 'right-side');
-    // };
-    //
-    // pickupPicker.addEventListener('click', handlePickersPositioning);
-    // dropoffPicker.addEventListener('click', handlePickersPositioning);
 
 
     function toggleSelectVisibility(containerId, selectId) {
@@ -1031,22 +1003,40 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
     if (window.innerWidth <= 768) {
         const formContainer = document.querySelector('.search-container');
-        const expandableElements = document.querySelectorAll('.expandable');
         const removeIcon = document.getElementById('remove-expanded-icon');
         const returnLocationWrapper = document.getElementById('returnLocationWrapper');
         const returnLocationButton = document.querySelector('.return-location');
         const promoCodeField = document.querySelector('.promo-code');
         const promoCodeToggle = document.getElementById('promo-code-toggle');
+        const locationInput = document.getElementById('location');
+        const submitBtn = document.querySelector('.submit-btn');
 
-        expandableElements.forEach(element => {
-            element.addEventListener('click', function () {
-                if (!formContainer.classList.contains('expanded')) {
-                    formContainer.classList.add('expanded');
-                    document.querySelectorAll('.return-location, .data-picker-container, .residence-and-age, .check-box, .input-wrapper, .submit-btn, .promo-code, #returnLocationWrapper')
-                        .forEach(el => el.classList.add('expanded'));
-                    removeIcon.style.display = 'inline';
-                }
-            });
+// Функція для розширення форми
+        const expandForm = () => {
+            const inputText = locationInput.value.trim();
+            if (inputText.length > 5 || locationInput.dataset.selected === 'true') {
+                document.querySelectorAll('.return-location, .data-picker-container, .residence-and-age, .check-box, .input-wrapper, .submit-btn, .promo-code, #returnLocationWrapper')
+                    .forEach(el => el.classList.add('expanded'));
+                locationInput.blur();
+                formContainer.classList.remove('fixed-on-focus');
+                submitBtn.style.display = 'block';
+            }
+        };
+
+        locationInput.addEventListener('focus', () => {
+            formContainer.classList.add('expanded');
+            submitBtn.style.display = 'none';
+            formContainer.classList.add('fixed-on-focus');
+            removeIcon.style.display = 'inline';
+        });
+
+        document.addEventListener('click', function (e) {
+            // Перевіряємо, чи кліком було вибрано значення зі списку автозаповнення
+            if (e.target.closest('.autocomplete-items div')) {
+                locationInput.value = e.target.closest('.autocomplete-items div').textContent.trim();
+                locationInput.dataset.selected = 'true';
+                expandForm();
+            }
         });
 
         removeIcon.addEventListener('click', function () {
@@ -1056,13 +1046,20 @@ document.addEventListener('DOMContentLoaded', function () {
             removeIcon.style.display = 'none';
             returnLocationButton.classList.remove('hidden');
             returnLocationWrapper.classList.add('hidden');
+            locationInput.blur();
+            formContainer.classList.remove('fixed-on-focus');
+            submitBtn.style.display = 'block';
             if (promoCodeField.classList.contains('active')) {
                 promoCodeField.classList.remove('active');
                 promoCodeToggle.checked = false;
             }
         });
+
+
+
     }
 });
+
 
 
 
