@@ -1013,14 +1013,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Функція для розширення форми
         const expandForm = () => {
-            const inputText = locationInput.value.trim();
-            if (inputText.length > 5 || locationInput.dataset.selected === 'true') {
                 document.querySelectorAll('.return-location, .data-picker-container, .residence-and-age, .check-box, .input-wrapper, .submit-btn, .promo-code, #returnLocationWrapper')
                     .forEach(el => el.classList.add('expanded'));
                 locationInput.blur();
                 formContainer.classList.remove('fixed-on-focus');
                 submitBtn.style.display = 'block';
-            }
         };
 
         locationInput.addEventListener('focus', () => {
@@ -1031,10 +1028,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         document.addEventListener('click', function (e) {
-            // Перевіряємо, чи кліком було вибрано значення зі списку автозаповнення
             if (e.target.closest('.autocomplete-items div')) {
-                locationInput.value = e.target.closest('.autocomplete-items div').textContent.trim();
-                locationInput.dataset.selected = 'true';
                 expandForm();
             }
         });

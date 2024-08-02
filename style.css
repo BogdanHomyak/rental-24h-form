@@ -50,6 +50,9 @@ body {
     margin-right: -10px;
 }
 
+select.open {
+    box-shadow: 0 160px 45px 0 rgba(73, 73, 91, 0.01), 0 102px 41px 0 rgba(73, 73, 91, 0.07), 0 58px 35px 0 rgba(73, 73, 91, 0.22), 0 26px 26px 0 rgba(73, 73, 91, 0.38), 0 6px 14px 0 rgba(73, 73, 91, 0.44);
+}
 .residence-and-age select {
     appearance: none; /* Firefox */
     -moz-appearance: none; /* Firefox */
@@ -77,28 +80,6 @@ body {
 }
 
 
-/*.residence-and-age-tooltip {*/
-/*    visibility: hidden;*/
-/*    width: 200px;*/
-/*    background-color: #f2f2f2;*/
-/*    color: black;*/
-/*    text-align: center;*/
-/*    padding: 5px;*/
-/*    position: absolute;*/
-/*    z-index: 1;*/
-/*    top: 125%;*/
-/*    left: 50%;*/
-/*    transform: translateX(-50%);*/
-/*    opacity: 0;*/
-/*    border-radius: 5px;*/
-/*    transition: opacity 0.3s;*/
-/*    white-space: normal;*/
-/*}*/
-
-/*.tooltip-container:hover .residence-and-age-tooltip {*/
-/*    visibility: visible;*/
-/*    opacity: 1;*/
-/*}*/
 
 #original-picker-section {
     display: flex;
