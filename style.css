@@ -208,7 +208,7 @@ body {
 .input-wrapper.error.focused #drop-of-icon path,
 .input-wrapper.focused #loc-icon path,
 #returnLocationWrapper.focused #drop-of-icon path,
-.input-wrapper.error:hover #loc-icon path
+.input-wrapper.error:hover #loc-icon path,
 .input-wrapper.error.focused #loc-icon path{
     fill: #4A44F2;
 }
