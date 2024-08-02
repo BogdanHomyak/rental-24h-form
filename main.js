@@ -60,6 +60,8 @@ document.querySelectorAll('.clear-icon').forEach(icon => {
 });
 
 
+
+
 // list location and autocomplit
 document.addEventListener("DOMContentLoaded", async function () {
     const form = document.getElementById('myForm');
@@ -118,16 +120,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         let svgIcon;
 
         if (iconType === 'rent') {
-            svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="19" height="20" viewBox="0 0 19 20" fill="none">
-<path d="M11 6.947L19 12V14L11 11.474V16.834L14 18.5V20L9.5 19L5 20V18.5L8 16.833V11.473L0 14V12L8 6.947V1.5C8 1.10218 8.15804 0.720644 8.43934 0.43934C8.72064 0.158035 9.10218 0 9.5 0C9.89782 0 10.2794 0.158035 10.5607 0.43934C10.842 0.720644 11 1.10218 11 1.5V6.947Z" fill="black"/>
-</svg>`;
+            svgIcon = `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#000000" fill-rule="evenodd" d="M8 1a.75.75 0 01.691.46l5.25 12.5a.75.75 0 01-1.027.96L8 12.457 3.086 14.92a.75.75 0 01-1.027-.96l5.25-12.5A.75.75 0 018 1zM4.227 12.67l3.437-1.722a.75.75 0 01.672 0l3.437 1.723L8 3.687 4.227 12.67z" clip-rule="evenodd"></path></g></svg>`;
         } else {
-            svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="20" viewBox="0 0 14 20" fill="none">
-<path d="M7 9.5C6.33696 9.5 5.70107 9.23661 5.23223 8.76777C4.76339 8.29893 4.5 7.66304 4.5 7C4.5 6.33696 4.76339 5.70107 5.23223 5.23223C5.70107 4.76339 6.33696 4.5 7 4.5C7.66304 4.5 8.29893 4.76339 8.76777 5.23223C9.23661 5.70107 9.5 6.33696 9.5 7C9.5 7.3283 9.43534 7.65339 9.3097 7.95671C9.18406 8.26002 8.99991 8.53562 8.76777 8.76777C8.53562 8.99991 8.26002 9.18406 7.95671 9.3097C7.65339 9.43534 7.3283 9.5 7 9.5ZM7 0C5.14348 0 3.36301 0.737498 2.05025 2.05025C0.737498 3.36301 0 5.14348 0 7C0 12.25 7 20 7 20C7 20 14 12.25 14 7C14 5.14348 13.2625 3.36301 11.9497 2.05025C10.637 0.737498 8.85652 0 7 0Z" fill="black"/>
-</svg>`;
+            svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M14.1 4C15.7167 4 17.1042 4.525 18.2625 5.575C19.4208 6.625 20 7.93333 20 9.5C20 11.0667 19.4208 12.375 18.2625 13.425C17.1042 14.475 15.7167 15 14.1 15H7.8L10.4 17.6L9 19L4 14L9 9L10.4 10.4L7.8 13H14.1C15.15 13 16.0625 12.6667 16.8375 12C17.6125 11.3333 18 10.5 18 9.5C18 8.5 17.6125 7.66667 16.8375 7C16.0625 6.33333 15.15 6 14.1 6H7V4H14.1Z" fill="black"/></svg>`;
         }
 
-        buttonDiv.innerHTML = iconPosition === 'left' ? `${svgIcon} ${label}` : `${label} ${svgIcon}`;
+        buttonDiv.innerHTML = iconPosition === 'left' ? `${svgIcon}   ${label}` : `${label} ${svgIcon}`;
         buttonDiv.querySelector('svg').style.margin = iconPosition === 'left' ? '0 10px 0 0' : '0 0 0 10px';
         buttonDiv.style.display = 'flex';
         buttonDiv.style.alignItems = 'center';
@@ -162,19 +160,17 @@ document.addEventListener("DOMContentLoaded", async function () {
                     closeAllLists();
                 });
                 a.appendChild(returnAtPickupDiv);
-            }
-
-            for (i = 0; i < arr.length; i++) {
+            }for (i = 0; i < arr.length; i++) {
                 if (arr[i].display.substr(0, val.length).toUpperCase() === val.toUpperCase()) {
                     b = document.createElement('DIV');
                     const svgIcon = arr[i].isAirport ?
-                        `<svg xmlns="http://www.w3.org/2000/svg" width="19" height="20" viewBox="0 0 19 20" fill="none">
+                        `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 19 20" fill="none">
 <path d="M11 6.947L19 12V14L11 11.474V16.834L14 18.5V20L9.5 19L5 20V18.5L8 16.833V11.473L0 14V12L8 6.947V1.5C8 1.10218 8.15804 0.720644 8.43934 0.43934C8.72064 0.158035 9.10218 0 9.5 0C9.89782 0 10.2794 0.158035 10.5607 0.43934C10.842 0.720644 11 1.10218 11 1.5V6.947Z" fill="black"/>
 </svg>` :
-                        `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="20" viewBox="0 0 14 20" fill="none">
+                        `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 14 20" fill="none">
 <path d="M7 9.5C6.33696 9.5 5.70107 9.23661 5.23223 8.76777C4.76339 8.29893 4.5 7.66304 4.5 7C4.5 6.33696 4.76339 5.70107 5.23223 5.23223C5.70107 4.76339 6.33696 4.5 7 4.5C7.66304 4.5 8.29893 4.76339 8.76777 5.23223C9.23661 5.70107 9.5 6.33696 9.5 7C9.5 7.3283 9.43534 7.65339 9.3097 7.95671C9.18406 8.26002 8.99991 8.53562 8.76777 8.76777C8.53562 8.99991 8.26002 9.18406 7.95671 9.3097C7.65339 9.43534 7.3283 9.5 7 9.5ZM7 0C5.14348 0 3.36301 0.737498 2.05025 2.05025C0.737498 3.36301 0 5.14348 0 7C0 12.25 7 20 7 20C7 20 14 12.25 14 7C14 5.14348 13.2625 3.36301 11.9497 2.05025C10.637 0.737498 8.85652 0 7 0Z" fill="black"/>
 </svg>`;
-                    b.innerHTML = `<div style="display: flex; align-items: center;">${svgIcon} <span style="margin-left: 10px;">${arr[i].display}</span></div>`;
+                    b.innerHTML = `<div>${svgIcon} <span style="margin-left: 10px;">${arr[i].display}</span></div>`;
                     b.innerHTML += `<input type="hidden" value="${arr[i].display}">`;
                     b.addEventListener('click', function (e) {
                         inp.value = this.getElementsByTagName('input')[0].value;
@@ -228,9 +224,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.addEventListener('click', function (e) {
             closeAllLists(e.target);
         });
-    }
-
-    function findNearestLocation(locations, input) {
+    }function findNearestLocation(locations, input) {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 const userLat = position.coords.latitude;
@@ -310,7 +304,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 });
 
                 //добавляє класс error і припиняє submit при певних умовах
-                if (input.name === 'location' && !locationPlace.includes(input.value)) {
+                if (input.name === 'location' && !locations.some(location => location.display === input.value)) {
                     inputWrapper.classList.add('error');
                     input.classList.add('error');
                     input.classList.remove('filled');
@@ -319,7 +313,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     }
                     formIsValid = false;
 
-                } else if (input.name === 'returnLocation' && !locationPlace.includes(input.value) && !returnLocationWrapper.classList.contains('hidden')) {
+                } else if (input.name === 'returnLocation' && !locations.some(location => location.display === input.value) && !returnLocationWrapper.classList.contains('hidden')) {
                     inputWrapper.classList.add('error');
                     input.classList.add('error');
                     input.classList.remove('filled');
@@ -330,7 +324,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     formIsValid = false;
                 } else if (input.name === 'returnLocation' && returnLocationWrapper.classList.contains('hidden')) {
                     const locationInput = form.querySelector("input[name='location']");
-                    if (locationInput && locationPlace.includes(locationInput.value.trim())) {
+                    if (locationInput && locations.includes(locationInput.value.trim())) {
                         input.value = locationInput.value.trim();
                         formData[input.name] = input.value;
                         inputWrapper.classList.remove('error');
